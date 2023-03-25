@@ -3,7 +3,7 @@ import responses
 
 
 @pytest.fixture(scope="function")
-def request_response():
+def mock_response():
     with responses.RequestsMock() as req_resp:
         responses.add(
             responses.GET,

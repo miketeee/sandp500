@@ -18,12 +18,12 @@ def testing():
             # headers={'Content-Type': 'text/html'},
         )
 
-    mock_response = req_resp.get("http://testrequestresponse.com", headers={'Content-Type': 'text/html'})
+    mock_response = req_resp.get("http://testrequestresponse.com", headers={'Content-Type': 'text/html', 'Status_Code': 200})
     r = requests.get(url="https://www.google.com")
 
     # print(r.headers['content-type'].split(';')[0].split('/'))
     print(dir(mock_response))
-    print(r.headers['Content_Type'])
+    print(mock_response.status)
 
 
 
