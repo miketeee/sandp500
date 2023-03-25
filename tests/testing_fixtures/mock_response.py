@@ -12,6 +12,6 @@ def request_response():
             status=200,
         )
 
-    mock_response = req_resp.get("http://testrequestresponse.com")
+    mock_response = req_resp.get("http://testrequestresponse.com", headers={'Content-Type': 'text/html'})
 
     return mock_response
