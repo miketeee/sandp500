@@ -2,13 +2,13 @@ import requests
 import responses
 from testing_fixtures.fixtures import mock_response
 
-from src.tasks import projecttask
+from src.tasks import dataextractiontasks
 
 
 def test_that_a_get_request_returns_response_obj(mock_response):
 
     good_response_returned = False
-    obj_returned_from_func_call = projecttask.make_get_request.fn(mock_response.url)
+    obj_returned_from_func_call = projecttasks.make_get_request.fn(mock_response.url)
 
     if isinstance(obj_returned_from_func_call, requests.models.Response):
         good_response_returned = True
