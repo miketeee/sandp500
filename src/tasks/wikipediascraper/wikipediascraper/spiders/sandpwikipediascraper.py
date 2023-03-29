@@ -14,7 +14,7 @@ class SandpwikipediascraperSpider(scrapy.Spider):
         all_rows = []
 
         table_rows = response.xpath('//table[@id="constituents"]//tbody//tr//td')
-        with open('src/filestoprocess/dataextractedfromhtml/extracteddata.txt', mode='w', encoding='utf-8') as pt:
+        with open(f'src/filestoprocess/dataextractedfromhtml/extracteddata{utc_to_str}.txt', mode='w', encoding='utf-8') as pt:
 
             for row in table_rows:
                 text = row.get()

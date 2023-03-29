@@ -1,5 +1,5 @@
 from prefect import flow
-from src.tasks.dataextractiontasks import *
+from src.tasks.extractiontasks import *
 
 
 @flow(name="Extract SandP 500 Company data from wikipedia website")
