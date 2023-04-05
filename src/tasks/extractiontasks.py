@@ -7,6 +7,7 @@ from prefect import task
 import requests
 from datetime import datetime
 
+
 @task(name='Make GET Request')
 def make_get_request(webpage_url):
     response_obj = requests.get(url=webpage_url)
@@ -42,7 +43,6 @@ def download_html_file(request_obj: requests.models.Response):
         htmlfile.write(request_obj.text)
 
     new_file_location = f'src/filestoprocess/downloadedhtml/sp500_{utc_to_str}.html'
-
 
 
 @task(name='Set up file server')
