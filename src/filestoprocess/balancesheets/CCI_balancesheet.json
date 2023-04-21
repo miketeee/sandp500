@@ -146,7 +146,7 @@
             "currentAccountsPayable": "334000000",
             "deferredRevenue": "657000000",
             "currentDebt": "100000000",
-            "shortTermDebt": "111000000",
+            "shortTermDebt": "399000000",
             "totalNonCurrentLiabilities": "20537000000",
             "capitalLeaseObligations": "5810000000",
             "longTermDebt": "18121000000",
@@ -157,7 +157,7 @@
             "otherNonCurrentLiabilities": "2516000000",
             "totalShareholderEquity": "10489000000",
             "treasuryStock": "None",
-            "retainedEarnings": "-5896000000",
+            "retainedEarnings": "-7356000000",
             "commonStock": "4000000",
             "commonStockSharesOutstanding": "416000000"
         },
