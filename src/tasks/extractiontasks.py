@@ -2,6 +2,7 @@ import http.server
 import socketserver
 import threading
 from scrapy.crawler import CrawlerProcess
+
 from src.tasks.wikipediascraper.wikipediascraper.spiders import sandpwikipediascraper
 from prefect import task
 import requests
@@ -37,12 +38,9 @@ def get_content_type(response_obj: requests.models.Response):
 def download_html_file(request_obj: requests.models.Response):
     current_utc_date = datetime.utcnow()
     utc_to_str = datetime.strftime(current_utc_date, '%Y_%m_%d')
-
-    with open(f'src/filestoprocess/downloadedhtml/sp500_{utc_to_str}.html', mode='w', encoding='utf-8') as htmlfile:
-        htmlfile.write(request_obj.text)
-
     new_file_location = f'src/filestoprocess/downloadedhtml/sp500_{utc_to_str}.html'
 
+    return new_file_location, request_obj.text
 
 
 
