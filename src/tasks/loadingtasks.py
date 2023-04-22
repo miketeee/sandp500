@@ -21,3 +21,8 @@ def get_client():
 @task(name='Add object to s3 bucket')
 def add_obj_to_s3(bucket_name, key, body, s3_client):
     s3_client.put_object(Bucket=bucket_name, Key=key, Body=body)
+
+
+def read_s3_bucket_file(bucket_name, key, s3_client):
+    response = s3_client.get_object(Bucket=bucket_name, Key=key)
+    print(response['Body'].read().decode('utf-8'))

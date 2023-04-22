@@ -8,6 +8,7 @@ from prefect import task
 import requests
 from datetime import datetime
 
+
 @task(name='Make GET Request')
 def make_get_request(webpage_url):
     response_obj = requests.get(url=webpage_url)
