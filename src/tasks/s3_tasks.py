@@ -25,4 +25,5 @@ def add_obj_to_s3(bucket_name, key, body, s3_client):
 
 def read_s3_bucket_file(bucket_name, key, s3_client):
     response = s3_client.get_object(Bucket=bucket_name, Key=key)
-    print(response['Body'].read().decode('utf-8'))
+    # print(response['Body'].read().decode('utf-8'))
+    return response

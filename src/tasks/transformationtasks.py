@@ -6,21 +6,20 @@ import time
 import requests
 import os
 import csv
+from src.tasks import s3_tasks
 
 
 @task(name="Check to see if raw data file exists")
-def verify_raw_data_file_exists():
+def verify_raw_data_file_exists(s3_client):
     current_utc_date = datetime.utcnow()
     utc_to_str = datetime.strftime(current_utc_date, '%Y_%m_%d')
+    key = f'src/filestoprocess/dataextractedfromhtml/extracteddata{utc_to_str}.txt'
 
-    with open(f'src/'
-              f'filestoprocess'
-              f'/dataextractedfromhtml'
-              f'/extracteddata{utc_to_str}.txt', mode='r', encoding='utf-8') as raw_data:
+    list_data = s3_tasks.read_s3_bucket_file('sandp', key, s3_client)
+    raw_data = ast.literal_eval(list_data['Body'].read().decode('utf-8'))
 
-        rawdata = ast.literal_eval(raw_data.read())
+    return raw_data
 
-    return rawdata
 
 
 @task(name="Restructure data into table")
@@ -71,12 +70,14 @@ def balance_sheet_retrieval(companies, api_key):
             url = f"https://www.alphavantage.co/query?function=BALANCE_SHEET&symbol={ticker}&apikey={api_key}"
             r = requests.request(method='GET', url=url)
             response_json = json.dumps(r.json(), indent=4)
-
-            with open(f"src/filestoprocess/balancesheets/{ticker}_balancesheet.json", mode='w') as output_file:
-                output_file.write(response_json)
-                print(r.json()['symbol'])
-                print(f"{len(companies)} left")
-                companies.pop(0)
+            key = f"src/filestoprocess/balancesheets/{ticker}_balancesheet.json"
+            client = s3_tasks.get_client.fn()
+            s3_tasks.add_obj_to_s3.fn('sandp', key, response_json, client)
+            with open(key, mode='w') as local_file:
+                local_file.write(response_json)
+            print(r.json()['symbol'])
+            print(f"{len(companies)} left")
+            companies.pop(0)
 
         except KeyError:
             print(f"You hit your per minute limit at ticker {ticker}")
@@ -95,6 +96,11 @@ def balance_sheet_retrieval(companies, api_key):
 def write_to_csvs():
     master_quarterly_reports = "./src/filestoprocess/quarterlyreports/masterquarterlyreports.csv"
     master_annual_reports = "./src/filestoprocess/annualreports/masterannualreports.csv"
+
+    with (open(master_quarterly_reports, mode='w') as mr,
+          open(master_annual_reports, mode='w') as ar):
+        pass
+
     header_flags = {}
 
     for balancesheetpath in os.listdir("./src/filestoprocess/balancesheets"):
@@ -129,6 +135,29 @@ def write_to_csvs():
 
                         report_writer.writerow(report_dict)
 
+@task(name='Write csv files to s3 bucket')
+def write_csv_to_s3(csv_file, client):
+    with open(csv_file, 'r') as file:
+        s3_tasks.add_obj_to_s3.fn('sandp', csv_file, file.read(), client)
 
 
+@task(name='Clean up folders')
+def clean_up_folders():
+    path = f'{os.getcwd()}/src/filestoprocess/'
+    os.chdir(path)
 
+    folders_to_clean = []
+    for folder in os.listdir():
+        sub_folder = folder
+        sub_path = f'{path}{sub_folder}/'
+        folders_to_clean.append(sub_path)
+
+    files_to_remove = []
+    for p in folders_to_clean:
+        if len(os.listdir(p)) > 0:
+            for f in os.listdir(p):
+                file_path = f'{p}{f}'
+                files_to_remove.append(file_path)
+
+    for file in files_to_remove:
+        os.remove(file)

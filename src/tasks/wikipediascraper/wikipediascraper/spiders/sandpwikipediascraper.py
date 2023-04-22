@@ -1,7 +1,7 @@
 import scrapy
 from bs4 import BeautifulSoup
 from datetime import datetime
-from src.tasks import loadingtasks
+from src.tasks import s3_tasks
 
 current_utc_date = datetime.utcnow()
 utc_to_str = datetime.strftime(current_utc_date, '%Y_%m_%d')
@@ -17,7 +17,7 @@ class SandpwikipediascraperSpider(scrapy.Spider):
         all_rows = []
 
         table_rows = response.xpath('//table[@id="constituents"]//tbody//tr//td')
-        client = loadingtasks.get_client()
+        client = s3_tasks.get_client()
         key = f'src/filestoprocess/dataextractedfromhtml/extracteddata{utc_to_str}.txt'
 
         for row in table_rows:
@@ -29,6 +29,6 @@ class SandpwikipediascraperSpider(scrapy.Spider):
             else:
                 pass
 
-        loadingtasks.add_obj_to_s3('sandp', key, str(all_rows), client)
+        s3_tasks.add_obj_to_s3('sandp', key, str(all_rows), client)
 
 
