@@ -1,6 +1,8 @@
 from src.flows import transformationflows, extractionflows
 from prefect import flow
+from prefect.filesystems import S3
 
+s3_block = S3.load("sandp-s3-block")
 
 @flow(name="main flow")
 def main_flow():

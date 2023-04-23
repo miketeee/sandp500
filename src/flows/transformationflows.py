@@ -2,7 +2,14 @@ from prefect import flow
 from src.tasks.transformationtasks import *
 from dotenv import dotenv_values
 from src.tasks import s3_tasks
-api_key = dotenv_values()['API_KEY']
+from prefect.blocks.system import Secret
+
+secret_block = Secret.load("apikey")
+
+# Access the stored secret
+api_key = secret_block.get()
+
+# api_key = dotenv_values()['API_KEY']
 
 @flow(name="Data cleaning flow")
 def data_cleaning():

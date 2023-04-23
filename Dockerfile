@@ -4,4 +4,4 @@ COPY requirements.txt requirements.txt
 RUN pip install --upgrade pip
 RUN pip3 install -r requirements.txt
 COPY . .
-CMD [ "prefect", "agent", "start", "-p", "default-agent-pool"]
+CMD [ "/bin/bash", "./run.sh" ]

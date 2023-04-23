@@ -1,13 +1,18 @@
 from prefect import task
 from dotenv import dotenv_values
 import boto3
+from prefect.blocks.system import Secret
+
+s3_access_key = Secret.load("awsaccesskey")
+s3_secret_key = Secret.load("awsscrectkey")
+s3_region = Secret.load("awsregion")
 
 
 @task(name='Get s3 client')
 def get_client():
-    access_key = dotenv_values()['AWS_ACCESS_KEY']
-    secret_key = dotenv_values()['AWS_SECRET_KEY']
-    region_key = dotenv_values()['REGION_NAME']
+    access_key = s3_access_key.get()
+    secret_key = s3_secret_key.get()
+    region_key = s3_region.get()
 
     client = boto3.client(
         's3',
