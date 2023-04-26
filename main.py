@@ -1,19 +1,17 @@
 from src.flows import transformationflows, extractionflows
 from prefect import flow
+from prefect.filesystems import S3
 
-    # FLOW ONE: Data Extraction Flow
-    # Scrape S & P 500 data from wikipedia
-    # add the data to a list
-    # write the list to a text file
-@flow(name="sandpentry")
-def sandpentry():
+s3_block = S3.load("sandp-s3-block")
+
+@flow(name="main flow")
+def main_flow():
     extractionflows.get_s_and_p_500_companies()
     transformationflows.data_cleaning()
 
 
 if __name__ == '__main__':
-    sandpentry()
-
+    main_flow()
 
 
 
