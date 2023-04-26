@@ -6,6 +6,12 @@ from src.tasks.wikipediascraper.wikipediascraper.spiders import sandpwikipediasc
 from prefect import task
 import requests
 from datetime import datetime
+from src.tasks import s3_tasks
+
+@task(name='Clear all folder sub folders of folder filestoproces')
+def clear_sub_folders():
+    pass
+
 
 
 @task(name='Make GET Request')
@@ -35,15 +41,13 @@ def get_content_type(response_obj: requests.models.Response):
 
 
 @task(name='Download response html file')
-def download_html_file(request_obj: requests.models.Response):
+def download_html_file(request_obj: requests.models.Response, client):
     current_utc_date = datetime.utcnow()
     utc_to_str = datetime.strftime(current_utc_date, '%Y_%m_%d')
-
-    with open(f'src/filestoprocess/downloadedhtml/sp500_{utc_to_str}.html', mode='w', encoding='utf-8') as htmlfile:
-        htmlfile.write(request_obj.text)
-
     new_file_location = f'src/filestoprocess/downloadedhtml/sp500_{utc_to_str}.html'
+    s3_tasks.add_obj_to_s3.fn('sandp', new_file_location, request_obj.text, client)
 
+    return new_file_location, request_obj.text
 
 @task(name='Set up file server')
 def set_up_file_server():
